@@ -9,12 +9,12 @@ interface Rates {
 
 const currencies = [
   { code: "USD", name: "US Dollar", symbol: "$" },
+  { code: "KRW", name: "Korean Won", symbol: "₩" },
+  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
+  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
   { code: "EUR", name: "Euro", symbol: "€" },
   { code: "GBP", name: "British Pound", symbol: "£" },
   { code: "INR", name: "Indian Rupee", symbol: "₹" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
-  { code: "KRW", name: "Korean Won", symbol: "₩" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
   { code: "HKD", name: "Hong Kong Dollar", symbol: "HK$" },
   { code: "TWD", name: "Taiwan Dollar", symbol: "NT$" },
   { code: "AUD", name: "Australian Dollar", symbol: "A$" },
@@ -35,7 +35,7 @@ const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const ExchangeCalculator = () => {
   const [amount, setAmount] = useState("1");
   const [fromCurrency, setFromCurrency] = useState("USD");
-  const [toCurrency, setToCurrency] = useState("INR");
+  const [toCurrency, setToCurrency] = useState("KRW");
   const [rates, setRates] = useState<Rates | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<number | null>(null);
