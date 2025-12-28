@@ -13,11 +13,21 @@ const currencies = [
   { code: "GBP", name: "British Pound", symbol: "£" },
   { code: "INR", name: "Indian Rupee", symbol: "₹" },
   { code: "JPY", name: "Japanese Yen", symbol: "¥" },
+  { code: "KRW", name: "Korean Won", symbol: "₩" },
+  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
+  { code: "HKD", name: "Hong Kong Dollar", symbol: "HK$" },
+  { code: "TWD", name: "Taiwan Dollar", symbol: "NT$" },
   { code: "AUD", name: "Australian Dollar", symbol: "A$" },
   { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
   { code: "CHF", name: "Swiss Franc", symbol: "Fr" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
   { code: "SGD", name: "Singapore Dollar", symbol: "S$" },
+  { code: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
+  { code: "THB", name: "Thai Baht", symbol: "฿" },
+  { code: "PHP", name: "Philippine Peso", symbol: "₱" },
+  { code: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+  { code: "VND", name: "Vietnamese Dong", symbol: "₫" },
+  { code: "AED", name: "UAE Dirham", symbol: "د.إ" },
+  { code: "SAR", name: "Saudi Riyal", symbol: "﷼" },
 ];
 
 const ExchangeCalculator = () => {
