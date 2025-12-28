@@ -2,95 +2,122 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/600.css';
+@import '@fontsource/nunito/700.css';
+@import '@fontsource/nunito/800.css';
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 340 100% 98%;
+    --foreground: 280 40% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 280 40% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 280 40% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 340 80% 70%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 180 60% 85%;
+    --secondary-foreground: 180 60% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 270 40% 95%;
+    --muted-foreground: 280 20% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 270 70% 85%;
+    --accent-foreground: 270 60% 30%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 340 30% 90%;
+    --input: 340 30% 90%;
+    --ring: 340 80% 70%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(340 80% 75%), hsl(270 70% 80%));
+    --gradient-secondary: linear-gradient(135deg, hsl(180 60% 85%), hsl(160 60% 80%));
+    --gradient-accent: linear-gradient(135deg, hsl(270 70% 85%), hsl(320 70% 85%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(340 30% 98%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(340 80% 70% / 0.15);
+    --shadow-card: 0 8px 30px -8px hsl(280 40% 50% / 0.12);
+    --shadow-glow: 0 0 40px hsl(340 80% 70% / 0.2);
+
+    --mint: 160 60% 75%;
+    --lavender: 270 70% 85%;
+    --peach: 20 90% 85%;
+    --sky: 200 80% 85%;
+    --lemon: 50 90% 85%;
+    --coral: 10 80% 80%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 280 30% 8%;
+    --foreground: 340 60% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 280 30% 12%;
+    --card-foreground: 340 60% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 280 30% 12%;
+    --popover-foreground: 340 60% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 340 90% 70%;
+    --primary-foreground: 280 30% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 180 70% 40%;
+    --secondary-foreground: 180 90% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 280 25% 18%;
+    --muted-foreground: 280 20% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 270 80% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 280 25% 20%;
+    --input: 280 25% 20%;
+    --ring: 340 90% 70%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(340 90% 65%), hsl(280 80% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(180 70% 45%), hsl(200 80% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(270 80% 60%), hsl(320 80% 65%));
+    --gradient-card: linear-gradient(145deg, hsl(280 30% 14%), hsl(280 30% 10%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(340 90% 70% / 0.25);
+    --shadow-card: 0 8px 30px -8px hsl(280 80% 60% / 0.3);
+    --shadow-glow: 0 0 60px hsl(340 90% 70% / 0.3);
+
+    --mint: 160 70% 50%;
+    --lavender: 270 80% 70%;
+    --peach: 20 90% 70%;
+    --sky: 200 90% 65%;
+    --lemon: 50 90% 65%;
+    --coral: 10 80% 65%;
+
+    --sidebar-background: 280 30% 10%;
+    --sidebar-foreground: 340 60% 95%;
+    --sidebar-primary: 340 90% 70%;
+    --sidebar-primary-foreground: 280 30% 10%;
+    --sidebar-accent: 280 25% 18%;
+    --sidebar-accent-foreground: 340 60% 95%;
+    --sidebar-border: 280 25% 20%;
+    --sidebar-ring: 340 90% 70%;
   }
 }
 
@@ -100,6 +127,84 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-nunito antialiased;
+  }
+}
+
+@layer utilities {
+  .card-cute {
+    @apply bg-card rounded-2xl shadow-card border border-border/50;
+    background: var(--gradient-card);
+  }
+
+  .btn-bounce {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .btn-bounce:hover {
+    @apply scale-105;
+  }
+
+  .btn-bounce:active {
+    @apply scale-95;
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer components {
+  .calculator-btn {
+    @apply w-14 h-14 rounded-xl font-semibold text-lg transition-all duration-200 ease-out;
+    @apply hover:scale-105 active:scale-95;
+    @apply flex items-center justify-center;
+  }
+
+  .calc-number {
+    @apply bg-card text-foreground border border-border/50 shadow-soft;
+    @apply hover:bg-muted;
+  }
+
+  .calc-operator {
+    @apply bg-primary text-primary-foreground shadow-soft;
+    @apply hover:brightness-110;
+  }
+
+  .calc-special {
+    @apply bg-accent text-accent-foreground shadow-soft;
+    @apply hover:brightness-110;
+  }
+
+  .tab-pill {
+    @apply px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300;
+    @apply hover:scale-105;
+  }
+
+  .tab-active {
+    background: var(--gradient-primary);
+    @apply text-primary-foreground shadow-soft;
+  }
+
+  .tab-inactive {
+    @apply bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .input-cute {
+    @apply w-full px-4 py-3 rounded-xl bg-muted/50 border border-border;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+    @apply transition-all duration-200;
+  }
+
+  .result-display {
+    @apply p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10;
+    @apply border border-primary/20;
   }
 }
