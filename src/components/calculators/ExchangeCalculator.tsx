@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ArrowRightLeft, RefreshCw, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowRightLeft, RefreshCw, Loader2, Radio } from "lucide-react";
 import { useCalculationHistory } from "@/hooks/useCalculationHistory";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -30,6 +30,8 @@ const currencies = [
   { code: "SAR", name: "Saudi Riyal", symbol: "﷼" },
 ];
 
+const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
 const ExchangeCalculator = () => {
   const [amount, setAmount] = useState("1");
   const [fromCurrency, setFromCurrency] = useState("USD");
@@ -37,12 +39,13 @@ const ExchangeCalculator = () => {
   const [rates, setRates] = useState<Rates | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<number | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isLive, setIsLive] = useState(true);
   
   const { user } = useAuth();
   const { saveCalculation } = useCalculationHistory();
 
-  const fetchRates = async () => {
+  const fetchRates = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -50,29 +53,35 @@ const ExchangeCalculator = () => {
       );
       const data = await response.json();
       setRates(data.rates);
-      setLastUpdated(new Date().toLocaleTimeString());
+      setLastUpdated(new Date());
+      setIsLive(true);
     } catch (error) {
       console.error("Failed to fetch rates:", error);
+      setIsLive(false);
       // Fallback rates if API fails
       setRates({
-        USD: 1,
-        EUR: 0.85,
-        GBP: 0.73,
-        INR: 83.5,
-        JPY: 149.5,
-        AUD: 1.53,
-        CAD: 1.36,
-        CHF: 0.88,
-        CNY: 7.24,
-        SGD: 1.34,
+        USD: 1, EUR: 0.85, GBP: 0.73, INR: 89.95, JPY: 156.5,
+        KRW: 1440, CNY: 7.02, HKD: 7.77, TWD: 31.45, AUD: 1.49,
+        CAD: 1.37, CHF: 0.79, SGD: 1.28, MYR: 4.05, THB: 31.08,
+        PHP: 58.78, IDR: 16770, VND: 26206, AED: 3.67, SAR: 3.75,
       });
     }
     setLoading(false);
-  };
+  }, [fromCurrency]);
 
+  // Fetch rates on currency change
   useEffect(() => {
     fetchRates();
-  }, [fromCurrency]);
+  }, [fetchRates]);
+
+  // Auto-refresh rates every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchRates();
+    }, AUTO_REFRESH_INTERVAL);
+    
+    return () => clearInterval(interval);
+  }, [fetchRates]);
 
   useEffect(() => {
     if (rates && amount) {
@@ -105,9 +114,17 @@ const ExchangeCalculator = () => {
 
   return (
     <div className="animate-scale-in space-y-4">
-      <p className="text-center text-muted-foreground text-sm">
-        Convert currencies in real-time! 💱
-      </p>
+      <div className="flex items-center justify-center gap-2">
+        <p className="text-center text-muted-foreground text-sm">
+          Convert currencies in real-time! 💱
+        </p>
+        {isLive && (
+          <span className="flex items-center gap-1 text-xs text-mint">
+            <Radio className="w-3 h-3 animate-pulse" />
+            LIVE
+          </span>
+        )}
+      </div>
 
       <div className="space-y-3">
         <div>
@@ -189,21 +206,28 @@ const ExchangeCalculator = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>
-          {lastUpdated && `Updated: ${lastUpdated}`}
-        </span>
+      <div className="bg-muted/30 rounded-xl p-3 flex items-center justify-between">
+        <div className="text-xs text-muted-foreground">
+          {lastUpdated && (
+            <>
+              <span className="font-medium">Last updated:</span>{" "}
+              {lastUpdated.toLocaleTimeString()}
+              <br />
+              <span className="text-[10px]">Auto-refreshes every 5 min</span>
+            </>
+          )}
+        </div>
         <button
           onClick={fetchRates}
           disabled={loading}
-          className="flex items-center gap-1 hover:text-primary transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium"
         >
           {loading ? (
             <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <RefreshCw className="w-3 h-3" />
           )}
-          Refresh
+          Refresh Now
         </button>
       </div>
     </div>
