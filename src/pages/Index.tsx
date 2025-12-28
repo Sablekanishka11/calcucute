@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Calculator, Calendar, Award, GraduationCap, ArrowRightLeft, DollarSign } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import Mascot from "@/components/Mascot";
+import UserMenu from "@/components/UserMenu";
 import BasicCalculator from "@/components/calculators/BasicCalculator";
 import AgeCalculator from "@/components/calculators/AgeCalculator";
 import MarksCalculator from "@/components/calculators/MarksCalculator";
@@ -41,7 +42,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8 flex flex-col">
       {/* Background decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
@@ -49,7 +50,7 @@ const Index = () => {
         <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-secondary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       </div>
 
-      <div className="max-w-md mx-auto relative">
+      <div className="max-w-md mx-auto relative flex-1 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -59,7 +60,10 @@ const Index = () => {
               <p className="text-xs text-muted-foreground">Your friendly calculator 💕</p>
             </div>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <UserMenu />
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -85,14 +89,14 @@ const Index = () => {
         </div>
 
         {/* Calculator Card */}
-        <div className="card-cute p-6 min-h-[400px]">
+        <div className="card-cute p-6 min-h-[400px] flex-1">
           {renderCalculator()}
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Made with 💖 for calculations
-        </p>
+        <footer className="text-center text-xs text-muted-foreground mt-6 py-4 border-t border-border/50">
+          <p>© 2025 | Designed with ❤ by Kanishka</p>
+        </footer>
       </div>
     </div>
   );

@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { ArrowRightLeft, Info } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CGPAConverter = () => {
   const [inputValue, setInputValue] = useState("");
   const [conversionType, setConversionType] = useState<"cgpaToPercent" | "percentToCgpa" | "cgpaTo4">("cgpaToPercent");
   const [result, setResult] = useState<{ value: number; formula: string } | null>(null);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const conversions = [
     { id: "cgpaToPercent", label: "CGPA → Percentage", inputLabel: "CGPA (10 scale)", max: 10 },
@@ -16,30 +21,40 @@ const CGPAConverter = () => {
     const value = parseFloat(inputValue);
     if (isNaN(value)) return;
 
-    let result: number;
+    let resultValue: number;
     let formula: string;
+    let resultLabel: string;
 
     switch (conversionType) {
       case "cgpaToPercent":
-        // Common formula: Percentage = (CGPA - 0.75) × 10
-        result = (value - 0.75) * 10;
+        resultValue = (value - 0.75) * 10;
         formula = "Percentage = (CGPA - 0.75) × 10";
+        resultLabel = `${value} CGPA = ${Math.max(0, resultValue).toFixed(2)}%`;
         break;
       case "percentToCgpa":
-        // Reverse: CGPA = (Percentage / 10) + 0.75
-        result = value / 10 + 0.75;
+        resultValue = value / 10 + 0.75;
         formula = "CGPA = (Percentage ÷ 10) + 0.75";
+        resultLabel = `${value}% = ${Math.max(0, resultValue).toFixed(2)} CGPA`;
         break;
       case "cgpaTo4":
-        // Convert 10-point to 4-point scale
-        result = (value / 10) * 4;
+        resultValue = (value / 10) * 4;
         formula = "4.0 GPA = (CGPA ÷ 10) × 4";
+        resultLabel = `${value} CGPA = ${Math.max(0, resultValue).toFixed(2)} GPA (4.0)`;
         break;
       default:
         return;
     }
 
-    setResult({ value: Math.max(0, result), formula });
+    setResult({ value: Math.max(0, resultValue), formula });
+    
+    // Save to history if logged in
+    if (user) {
+      saveCalculation(
+        "convert",
+        { input: value, type: conversionType },
+        resultLabel
+      );
+    }
   };
 
   const currentConversion = conversions.find((c) => c.id === conversionType)!;

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowRightLeft, RefreshCw, Loader2 } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Rates {
   [key: string]: number;
@@ -26,6 +28,9 @@ const ExchangeCalculator = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const fetchRates = async () => {
     setLoading(true);
@@ -63,7 +68,8 @@ const ExchangeCalculator = () => {
     if (rates && amount) {
       const amountNum = parseFloat(amount);
       if (!isNaN(amountNum)) {
-        setResult(amountNum * (rates[toCurrency] || 1));
+        const convertedResult = amountNum * (rates[toCurrency] || 1);
+        setResult(convertedResult);
       }
     }
   }, [amount, toCurrency, rates]);
@@ -75,6 +81,16 @@ const ExchangeCalculator = () => {
 
   const getCurrencySymbol = (code: string) => {
     return currencies.find((c) => c.code === code)?.symbol || code;
+  };
+
+  const handleConvert = () => {
+    if (result !== null && user) {
+      saveCalculation(
+        "exchange",
+        { amount: parseFloat(amount), from: fromCurrency, to: toCurrency },
+        `${getCurrencySymbol(fromCurrency)}${parseFloat(amount).toLocaleString()} = ${getCurrencySymbol(toCurrency)}${result.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+      );
+    }
   };
 
   return (
@@ -143,7 +159,7 @@ const ExchangeCalculator = () => {
       </div>
 
       {result !== null && (
-        <div className="result-display animate-slide-up text-center">
+        <div className="result-display animate-slide-up text-center" onClick={handleConvert}>
           <div className="text-sm text-muted-foreground mb-1">
             {getCurrencySymbol(fromCurrency)} {parseFloat(amount).toLocaleString()} =
           </div>
@@ -154,6 +170,11 @@ const ExchangeCalculator = () => {
             <div className="text-xs text-muted-foreground mt-2">
               1 {fromCurrency} = {rates[toCurrency]?.toFixed(4)} {toCurrency}
             </div>
+          )}
+          {user && (
+            <p className="text-xs text-primary mt-2 cursor-pointer hover:underline" onClick={handleConvert}>
+              Tap to save to history
+            </p>
           )}
         </div>
       )}

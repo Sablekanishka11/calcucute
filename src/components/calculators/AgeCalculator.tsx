@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Calendar, Cake } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AgeCalculator = () => {
   const [dob, setDob] = useState("");
   const [age, setAge] = useState<{ years: number; months: number; days: number } | null>(null);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const calculateAge = () => {
     if (!dob) return;
@@ -27,6 +32,15 @@ const AgeCalculator = () => {
     }
 
     setAge({ years, months, days });
+    
+    // Save to history if logged in
+    if (user) {
+      saveCalculation(
+        "age",
+        { dob },
+        `${years} years, ${months} months, ${days} days`
+      );
+    }
   };
 
   return (

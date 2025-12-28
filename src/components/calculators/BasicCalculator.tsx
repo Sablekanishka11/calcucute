@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { Delete } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 const BasicCalculator = () => {
   const [display, setDisplay] = useState("0");
   const [equation, setEquation] = useState("");
   const [shouldReset, setShouldReset] = useState(false);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const handleNumber = useCallback((num: string) => {
     if (shouldReset) {
@@ -25,14 +30,20 @@ const BasicCalculator = () => {
       const fullEquation = equation + display;
       const sanitized = fullEquation.replace(/×/g, "*").replace(/÷/g, "/");
       const result = eval(sanitized);
-      setDisplay(String(parseFloat(result.toFixed(8))));
+      const resultStr = String(parseFloat(result.toFixed(8)));
+      setDisplay(resultStr);
       setEquation("");
       setShouldReset(true);
+      
+      // Save to history if logged in
+      if (user) {
+        saveCalculation("basic", { equation: fullEquation }, `${fullEquation} = ${resultStr}`);
+      }
     } catch {
       setDisplay("Error");
       setShouldReset(true);
     }
-  }, [equation, display]);
+  }, [equation, display, user, saveCalculation]);
 
   const handleClear = useCallback(() => {
     setDisplay("0");

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Subject {
   id: number;
@@ -29,6 +31,9 @@ const CGPACalculator = () => {
     { id: 3, credits: "", grade: "A" },
   ]);
   const [result, setResult] = useState<number | null>(null);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const addSubject = () => {
     setSubjects([...subjects, { id: Date.now(), credits: "", grade: "A" }]);
@@ -57,7 +62,17 @@ const CGPACalculator = () => {
 
     if (totalCredits === 0) return;
 
-    setResult(totalPoints / totalCredits);
+    const gpa = totalPoints / totalCredits;
+    setResult(gpa);
+    
+    // Save to history if logged in
+    if (user) {
+      saveCalculation(
+        "cgpa",
+        { subjects: subjects.map(s => ({ credits: s.credits, grade: s.grade })) },
+        `GPA: ${gpa.toFixed(2)}`
+      );
+    }
   };
 
   return (
