@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Award, Target } from "lucide-react";
+import { useCalculationHistory } from "@/hooks/useCalculationHistory";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MarksCalculator = () => {
   const [total, setTotal] = useState("");
   const [obtained, setObtained] = useState("");
   const [result, setResult] = useState<{ percentage: number; grade: string; emoji: string } | null>(null);
+  
+  const { user } = useAuth();
+  const { saveCalculation } = useCalculationHistory();
 
   const calculateResult = () => {
     const totalMarks = parseFloat(total);
@@ -37,6 +42,15 @@ const MarksCalculator = () => {
     }
 
     setResult({ percentage, grade, emoji });
+    
+    // Save to history if logged in
+    if (user) {
+      saveCalculation(
+        "marks",
+        { total: totalMarks, obtained: obtainedMarks },
+        `${percentage.toFixed(1)}% - Grade ${grade}`
+      );
+    }
   };
 
   const getGradeColor = (grade: string) => {
