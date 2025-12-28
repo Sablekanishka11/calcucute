@@ -3,6 +3,78 @@ import { Delete } from "lucide-react";
 import { useCalculationHistory } from "@/hooks/useCalculationHistory";
 import { useAuth } from "@/contexts/AuthContext";
 
+// Safe math expression evaluator - replaces dangerous eval()
+const safeEvaluate = (expression: string): number => {
+  // Tokenize the expression
+  const tokens: (number | string)[] = [];
+  let currentNumber = "";
+  
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i];
+    
+    if (char === " ") continue;
+    
+    if (/[0-9.]/.test(char)) {
+      currentNumber += char;
+    } else if (["+", "-", "*", "/"].includes(char)) {
+      if (currentNumber) {
+        tokens.push(parseFloat(currentNumber));
+        currentNumber = "";
+      } else if (char === "-" && (tokens.length === 0 || typeof tokens[tokens.length - 1] === "string")) {
+        // Handle negative numbers
+        currentNumber = "-";
+        continue;
+      }
+      tokens.push(char);
+    }
+  }
+  
+  if (currentNumber) {
+    tokens.push(parseFloat(currentNumber));
+  }
+  
+  // Validate tokens - must alternate between numbers and operators
+  for (let i = 0; i < tokens.length; i++) {
+    const isNumber = typeof tokens[i] === "number";
+    const shouldBeNumber = i % 2 === 0;
+    if (isNumber !== shouldBeNumber) {
+      throw new Error("Invalid expression");
+    }
+  }
+  
+  // First pass: handle * and /
+  let i = 0;
+  while (i < tokens.length) {
+    if (tokens[i] === "*" || tokens[i] === "/") {
+      const left = tokens[i - 1] as number;
+      const right = tokens[i + 1] as number;
+      const result = tokens[i] === "*" ? left * right : left / right;
+      tokens.splice(i - 1, 3, result);
+      i--;
+    }
+    i++;
+  }
+  
+  // Second pass: handle + and -
+  i = 0;
+  while (i < tokens.length) {
+    if (tokens[i] === "+" || tokens[i] === "-") {
+      const left = tokens[i - 1] as number;
+      const right = tokens[i + 1] as number;
+      const result = tokens[i] === "+" ? left + right : left - right;
+      tokens.splice(i - 1, 3, result);
+      i--;
+    }
+    i++;
+  }
+  
+  if (tokens.length !== 1 || typeof tokens[0] !== "number") {
+    throw new Error("Invalid expression");
+  }
+  
+  return tokens[0];
+};
+
 const BasicCalculator = () => {
   const [display, setDisplay] = useState("0");
   const [equation, setEquation] = useState("");
@@ -29,7 +101,7 @@ const BasicCalculator = () => {
     try {
       const fullEquation = equation + display;
       const sanitized = fullEquation.replace(/×/g, "*").replace(/÷/g, "/");
-      const result = eval(sanitized);
+      const result = safeEvaluate(sanitized);
       const resultStr = String(parseFloat(result.toFixed(8)));
       setDisplay(resultStr);
       setEquation("");
