@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, ArrowRightLeft, Radio, Info, AlertTriangle } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCalculationHistory } from "@/hooks/useCalculationHistory";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -56,9 +54,6 @@ const ExchangeCalculator = () => {
   const [result, setResult] = useState<number | null>(null);
   const [isLive, setIsLive] = useState(false);
   const [isCached, setIsCached] = useState(false);
-  
-  const { user } = useAuth();
-  const { saveCalculation } = useCalculationHistory();
 
   // Get cached rates if valid
   const getCachedRates = useCallback((base: string): RateData | null => {
@@ -209,16 +204,6 @@ const ExchangeCalculator = () => {
     return currencies.find((c) => c.code === code)?.symbol || code;
   };
 
-  const handleConvert = () => {
-    if (result !== null && user) {
-      saveCalculation(
-        "exchange",
-        { amount: parseFloat(amount), from: fromCurrency, to: toCurrency },
-        `${getCurrencySymbol(fromCurrency)}${parseFloat(amount).toLocaleString()} = ${getCurrencySymbol(toCurrency)}${result.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
-      );
-    }
-  };
-
   const getExchangeRate = () => {
     if (!rateData?.rates) return null;
     return rateData.rates[toCurrency];
@@ -234,29 +219,29 @@ const ExchangeCalculator = () => {
   };
 
   return (
-    <div className="animate-scale-in space-y-4">
+    <div className="animate-scale-in space-y-3 sm:space-y-4">
       {/* Header with status */}
       <div className="flex items-center justify-center gap-2 flex-wrap">
-        <p className="text-center text-muted-foreground text-sm">
+        <p className="text-center text-muted-foreground text-xs sm:text-sm">
           Convert currencies in real-time! 💱
         </p>
         {isLive && (
-          <span className="flex items-center gap-1 text-xs text-mint">
-            <Radio className="w-3 h-3 animate-pulse" />
+          <span className="flex items-center gap-1 text-[10px] sm:text-xs text-mint">
+            <Radio className="w-2.5 h-2.5 sm:w-3 sm:h-3 animate-pulse" />
             {isCached ? "CACHED" : "LIVE"}
           </span>
         )}
         {!isLive && !loading && (
-          <span className="flex items-center gap-1 text-xs text-destructive">
-            <AlertTriangle className="w-3 h-3" />
+          <span className="flex items-center gap-1 text-[10px] sm:text-xs text-destructive">
+            <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
             OFFLINE
           </span>
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         <div>
-          <label className="block text-sm font-semibold text-foreground mb-1">
+          <label className="block text-xs sm:text-sm font-semibold text-foreground mb-1">
             Amount
           </label>
           <input
@@ -269,15 +254,15 @@ const ExchangeCalculator = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-muted-foreground mb-1">
+            <label className="block text-[10px] sm:text-xs font-semibold text-muted-foreground mb-1">
               From
             </label>
             <select
               value={fromCurrency}
               onChange={(e) => setFromCurrency(e.target.value)}
-              className="input-cute py-2 text-sm"
+              className="input-cute py-1.5 sm:py-2 text-xs sm:text-sm"
             >
               {currencies.map((curr) => (
                 <option key={curr.code} value={curr.code}>
@@ -289,20 +274,20 @@ const ExchangeCalculator = () => {
 
           <button
             onClick={swapCurrencies}
-            className="mt-5 p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+            className="mt-4 sm:mt-5 p-1.5 sm:p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
             title="Swap currencies"
           >
-            <ArrowRightLeft className="w-4 h-4 text-primary" />
+            <ArrowRightLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
           </button>
 
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-muted-foreground mb-1">
+            <label className="block text-[10px] sm:text-xs font-semibold text-muted-foreground mb-1">
               To
             </label>
             <select
               value={toCurrency}
               onChange={(e) => setToCurrency(e.target.value)}
-              className="input-cute py-2 text-sm"
+              className="input-cute py-1.5 sm:py-2 text-xs sm:text-sm"
             >
               {currencies.map((curr) => (
                 <option key={curr.code} value={curr.code}>
@@ -316,35 +301,25 @@ const ExchangeCalculator = () => {
 
       {/* Result display */}
       {loading ? (
-        <div className="text-center py-4">
-          <RefreshCw className="w-6 h-6 animate-spin mx-auto text-primary" />
-          <p className="text-sm text-muted-foreground mt-2">Fetching latest rates...</p>
+        <div className="text-center py-3 sm:py-4">
+          <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6 animate-spin mx-auto text-primary" />
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">Fetching latest rates...</p>
         </div>
       ) : result !== null && rateData ? (
-        <div className="text-center space-y-3">
-          <div className="p-4 rounded-xl bg-gradient-to-r from-mint/20 to-lavender/20 border border-mint/30">
-            <p className="text-2xl font-bold text-foreground">
+        <div className="text-center space-y-2 sm:space-y-3">
+          <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-mint/20 to-lavender/20 border border-mint/30">
+            <p className="text-lg sm:text-2xl font-bold text-foreground">
               {getCurrencySymbol(fromCurrency)}{parseFloat(amount).toLocaleString()} = {getCurrencySymbol(toCurrency)}{result.toLocaleString(undefined, { maximumFractionDigits: 2 })}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
               1 {fromCurrency} = {getExchangeRate()?.toLocaleString(undefined, { maximumFractionDigits: 4 })} {toCurrency}
             </p>
           </div>
-
-          {user && (
-            <Button
-              onClick={handleConvert}
-              size="sm"
-              className="text-xs"
-            >
-              Save to History
-            </Button>
-          )}
         </div>
       ) : !isLive ? (
-        <div className="text-center py-4 text-destructive">
-          <AlertTriangle className="w-6 h-6 mx-auto mb-2" />
-          <p className="text-sm">Unable to fetch rates. Please refresh.</p>
+        <div className="text-center py-3 sm:py-4 text-destructive">
+          <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-2" />
+          <p className="text-xs sm:text-sm">Unable to fetch rates. Please refresh.</p>
         </div>
       ) : null}
 
@@ -352,10 +327,10 @@ const ExchangeCalculator = () => {
       {rateData && (
         <div className="space-y-2 pt-2 border-t border-border/50">
           {/* Source and timestamp */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-muted-foreground">
+          <div className="flex flex-col gap-1 text-[10px] sm:text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Info className="w-3 h-3" />
-              <span>Source: {rateData.source}</span>
+              <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+              <span className="truncate">Source: {rateData.source}</span>
             </div>
             <span>Last updated: {formatLastUpdated()}</span>
           </div>
@@ -367,21 +342,19 @@ const ExchangeCalculator = () => {
               disabled={loading}
               variant="outline"
               size="sm"
-              className="text-xs gap-1"
+              className="text-[10px] sm:text-xs gap-1 h-7 sm:h-8"
             >
-              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${loading ? "animate-spin" : ""}`} />
               Refresh Rates
             </Button>
           </div>
 
           {/* Disclaimer */}
-          <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
+          <div className="bg-muted/50 rounded-lg p-2 sm:p-3 text-[10px] sm:text-xs text-muted-foreground">
             <p className="flex items-start gap-1">
-              <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
+              <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3 mt-0.5 flex-shrink-0" />
               <span>
-                Rates are mid-market reference rates sourced from central banks and financial data providers. 
-                They may differ slightly from Google, banks, or money transfer services due to spreads and fees.
-                Auto-refreshes hourly. Cached for 30 minutes to ensure reliable service.
+                Rates are mid-market reference rates. They may differ from Google, banks, or money transfer services.
               </span>
             </p>
           </div>

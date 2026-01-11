@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Delete } from "lucide-react";
-import { useCalculationHistory } from "@/hooks/useCalculationHistory";
-import { useAuth } from "@/contexts/AuthContext";
 
 // Safe math expression evaluator - replaces dangerous eval()
 const safeEvaluate = (expression: string): number => {
@@ -79,9 +77,6 @@ const BasicCalculator = () => {
   const [display, setDisplay] = useState("0");
   const [equation, setEquation] = useState("");
   const [shouldReset, setShouldReset] = useState(false);
-  
-  const { user } = useAuth();
-  const { saveCalculation } = useCalculationHistory();
 
   const handleNumber = useCallback((num: string) => {
     if (shouldReset) {
@@ -106,16 +101,11 @@ const BasicCalculator = () => {
       setDisplay(resultStr);
       setEquation("");
       setShouldReset(true);
-      
-      // Save to history if logged in
-      if (user) {
-        saveCalculation("basic", { equation: fullEquation }, `${fullEquation} = ${resultStr}`);
-      }
     } catch {
       setDisplay("Error");
       setShouldReset(true);
     }
-  }, [equation, display, user, saveCalculation]);
+  }, [equation, display]);
 
   const handleClear = useCallback(() => {
     setDisplay("0");
@@ -178,22 +168,22 @@ const BasicCalculator = () => {
 
   return (
     <div className="animate-scale-in">
-      <p className="text-center text-muted-foreground mb-4 text-sm">
+      <p className="text-center text-muted-foreground mb-3 sm:mb-4 text-xs sm:text-sm">
         Let's crunch some numbers! ✨
       </p>
       
       {/* Display */}
-      <div className="bg-muted/50 rounded-2xl p-4 mb-4">
-        <div className="text-right text-muted-foreground text-sm h-5 mb-1">
+      <div className="bg-muted/50 rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4">
+        <div className="text-right text-muted-foreground text-xs sm:text-sm h-4 sm:h-5 mb-1">
           {equation}
         </div>
-        <div className="text-right text-3xl font-bold text-foreground break-all">
+        <div className="text-right text-2xl sm:text-3xl font-bold text-foreground break-all">
           {display}
         </div>
       </div>
 
       {/* Buttons */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
         {buttons.map((btn, idx) => (
           <button
             key={idx}
@@ -203,7 +193,7 @@ const BasicCalculator = () => {
               btn.type === "operator" ? "calc-operator" : "calc-special"
             } ${btn.wide ? "col-span-2" : ""}`}
           >
-            {btn.icon ? <Delete className="w-5 h-5" /> : btn.label}
+            {btn.icon ? <Delete className="w-4 h-4 sm:w-5 sm:h-5" /> : btn.label}
           </button>
         ))}
       </div>
